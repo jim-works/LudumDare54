@@ -266,6 +266,7 @@ GameObject:
   - component: {fileID: 116799942}
   - component: {fileID: 116799941}
   - component: {fileID: 116799943}
+  - component: {fileID: 116799944}
   m_Layer: 0
   m_Name: winkie
   m_TagString: Untagged
@@ -353,9 +354,9 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 0
+  m_LinearDrag: 5
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -424,8 +425,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f157801ef5f4c054983269feb1e70c7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  JumpHeight: 5
-  RunAcceleration: 25
+  MoveSpeed: 10
+  MoveAcceleration: 50
+  MoveDirection: {x: 0, y: 0}
+--- !u!114 &116799944
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 116799938}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df39e00805c661ea6b84bf4da117f23a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
