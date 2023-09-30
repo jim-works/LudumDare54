@@ -14,7 +14,8 @@ public class ScenesManager : MonoBehaviour
     public enum Scene
     {
         ButtonScene,
-        SampleScene
+        SampleScene,
+        EndScene
     }
 
     public void LoadScene(Scene scene)
