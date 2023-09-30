@@ -17,6 +17,7 @@ public class Guard : MonoBehaviour
     public Transform Detecting;
     public MonoBehaviour Chaser;
     public MonoBehaviour Wanderer;
+    public GameObject ChaseUI;
 
     public State AIState
     {
@@ -78,6 +79,7 @@ public class Guard : MonoBehaviour
                 break;
             case State.Chasing:
                 Chaser.enabled = active;
+                ChaseUI.SetActive(active);
                 if (active) {
                     control.MoveSpeed = ChaseMoveSpeed;
                 }
