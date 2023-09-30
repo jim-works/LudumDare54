@@ -10,7 +10,7 @@ public class Control : MonoBehaviour
     public Vector2 MoveDirection;
     private Rigidbody2D rb;
 
-
+    const float MOVE_EPSILON = 0.01f;
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -22,10 +22,11 @@ public class Control : MonoBehaviour
     }
 
     private void DoMovement() {
-        if(MoveDirection == Vector2.zero) {
+        //TODO: improve this
+        float moveMag = MoveDirection.magnitude;
+        if(moveMag <= MOVE_EPSILON) {
             return;
         }
-        float moveMag = MoveDirection.magnitude;
         Vector2 deltaMovement = (moveMag > 1f) ? MoveDirection.normalized*MoveSpeed : MoveDirection*MoveSpeed;
         Vector2 dv = (deltaMovement-rb.velocity).normalized;
 
