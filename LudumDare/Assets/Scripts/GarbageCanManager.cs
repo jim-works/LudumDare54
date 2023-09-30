@@ -8,7 +8,7 @@ public class GarbageCanManager : MonoBehaviour
     public GameObject BasicGarbageCanPrefab;
     public GameObject SpecialGarbageCan {get; private set;}
 
-    void Start()
+    void Awake()
     {
         SelectSpeicalGarbageCan();
     }
