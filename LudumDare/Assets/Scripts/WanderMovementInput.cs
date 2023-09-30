@@ -50,7 +50,6 @@ public class WanderMovementInput : MonoBehaviour
     private IEnumerator SetDestination() {
         while(true) {
             yield return new WaitForSeconds(WanderPauseDuration);
-            Debug.Log("Destination Set!");
             wanderDestination = origin + Random.insideUnitCircle*WanderRadius;
             doneMoving = false;
             while (!doneMoving) {

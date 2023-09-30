@@ -17,14 +17,16 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        DoPickpocket();
+    }
+    private void DoPickpocket()
+    {
         GameObject civ = ObjectRegistry.Singleton.GetClosestCivilian(transform.position, PickpocketRadius);
         PickpocketUI.gameObject.SetActive(civ != null);
         if (civ != null) {
             PickpocketUI.DisplayFor(civ.GetComponent<Inventory>(), 10);
         }
-        
     }
-
     public void OnPickpocket(Inventory target, PickPocketResult result) {
         Debug.Log("Pickpocketed! " + result.ToString());
         if (result == PickPocketResult.Success) {
