@@ -103,17 +103,7 @@ public class GarbageDigMinigame : MonoBehaviour
         {
             return;
         }
-        float weight = Random.Range(0f, totalDropWeights);
-        int idx = 0;
-        for (; idx < Drops.Length; idx++)
-        {
-            weight -= DropWeights[idx];
-            if (weight <= 0)
-            {
-                break;
-            }
-        }
-        idx = System.Math.Max(idx, Drops.Length - 1);
+        int idx = Util.ChooseFromWeightedArray(DropWeights, totalDropWeights);
         //switch to picking anim
         currentDrop = Drops[idx];
         foundItem.sprite = currentDrop.Icon;
