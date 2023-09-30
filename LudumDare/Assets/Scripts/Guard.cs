@@ -84,4 +84,14 @@ public class Guard : MonoBehaviour
                 break;
         }
     }
+
+    void OnEnable()
+    {
+        ObjectRegistry.Singleton.Guards.Add(gameObject);
+    }
+
+    void OnDisable()
+    {
+        ObjectRegistry.Singleton.Guards.Remove(gameObject);
+    }
 }

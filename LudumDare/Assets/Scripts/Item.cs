@@ -1,8 +1,9 @@
 using UnityEngine;
 
-public class Item {
-    public GameObject Holder;
-    public virtual void OnPickup() {}
-    public virtual void OnDrop() {}
-    public virtual void OnUse() {}
+[CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/SpawnItemScriptableObject", order = 1)]
+public class Item : ScriptableObject {
+    public Sprite Icon;
+    public virtual void OnPickup(GameObject holder) {}
+    public virtual void OnDrop(GameObject holder) {}
+    public virtual void OnUse(GameObject holder) {}
 }
