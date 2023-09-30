@@ -22,6 +22,7 @@ public class WanderMovementInput : MonoBehaviour
 
     void OnEnable()
     {
+        doneMoving = true;
         origin = transform.position;
         wanderingCoroutine = SetDestination();
         StartCoroutine(wanderingCoroutine);
@@ -37,9 +38,10 @@ public class WanderMovementInput : MonoBehaviour
     {
         if (doneMoving) {
             control.MoveDirection = Vector2.zero;
+            return;
         };
         Vector2 delta = wanderDestination - (Vector2)transform.position;
-        if (delta.sqrMagnitude > MOVEMENT_EPSILON*MOVEMENT_EPSILON) {
+        if (delta.sqrMagnitude < MOVEMENT_EPSILON*MOVEMENT_EPSILON) {
             doneMoving = true;
         }
         control.MoveDirection =  delta;
@@ -49,8 +51,11 @@ public class WanderMovementInput : MonoBehaviour
         while(true) {
             yield return new WaitForSeconds(WanderPauseDuration);
             Debug.Log("Destination Set!");
-            doneMoving = false;
             wanderDestination = origin + Random.insideUnitCircle*WanderRadius;
+            doneMoving = false;
+            while (!doneMoving) {
+                yield return null;
+            }
         }
     }
 }
