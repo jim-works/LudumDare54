@@ -20,7 +20,8 @@ public class GarbageDigMinigame : MonoBehaviour
     public float[] DropWeights;
     public float FindItemProb = 0.1f;
     public float BaseDecisionTime = 10;
-    public float DecisionTime => BaseDecisionTime;
+    public float DecisionTime => BaseDecisionTime/Mathf.Max(1f,Alarm.Level);
+    public float AlarmIncreasePerDig = 0.025f;
 
     private float timeElapsed;
     private float decisionTimeElapsed;
@@ -46,6 +47,7 @@ public class GarbageDigMinigame : MonoBehaviour
         }
         DiggingUI.SetActive(true);
         SelectingUI.SetActive(false);
+        state = State.Digging;
     }
 
     void OnDisable()
@@ -56,6 +58,7 @@ public class GarbageDigMinigame : MonoBehaviour
     void Update()
     {
         timeElapsed += Time.deltaTime;
+        Debug.Log(state);
         switch (state)
         {
             case State.Digging:
@@ -70,7 +73,10 @@ public class GarbageDigMinigame : MonoBehaviour
                 break;
             case State.SelectingItem:
                 decisionTimeElapsed += Time.deltaTime;
-                FoundItemSprite.transform.localScale = Vector3.one * FoundItemScaleCurve.Evaluate(decisionTimeElapsed);
+                FoundItemSprite.transform.localScale = Vector3.one * FoundItemScaleCurve.Evaluate(decisionTimeElapsed/DecisionTime);
+                if (decisionTimeElapsed >= DecisionTime) {
+                    EndGame();
+                }
                 if (Input.GetKeyDown(KeyCode.E))
                 {
                     targetInventory.PickupItem(currentDrop);
@@ -92,6 +98,7 @@ public class GarbageDigMinigame : MonoBehaviour
     {
         DigParticles.Play();
         HandsDigAnim.Play();
+        Alarm.IncreaseAlarm(AlarmIncreasePerDig);
         if (Random.value > FindItemProb)
         {
             return;
@@ -115,6 +122,7 @@ public class GarbageDigMinigame : MonoBehaviour
         FoundItemSprite.transform.localScale = Vector3.one * FoundItemScaleCurve.Evaluate(0f);
         DiggingUI.SetActive(false);
         SelectingUI.SetActive(true);
+        state = State.SelectingItem;
     }
 
     private void EndGame()
