@@ -52,9 +52,6 @@ public class WanderMovementInput : MonoBehaviour
             yield return new WaitForSeconds(WanderPauseDuration);
             wanderDestination = origin + Random.insideUnitCircle*WanderRadius;
             doneMoving = false;
-            while (!doneMoving) {
-                yield return null;
-            }
         }
     }
 }

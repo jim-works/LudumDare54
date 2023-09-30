@@ -8,7 +8,7 @@ public class WalkAnimator : MonoBehaviour
     private const float DIR_CHANGE_EPSILON = 0.2f;
     public Sprite[] Down;
     public Sprite[] Up;
-    public float DistancePerFrame = 0.25f;
+    public float DistancePerFrame = 0.5f;
     private Rigidbody2D rb;
     private SpriteRenderer sr;
     private int frame = 0;
