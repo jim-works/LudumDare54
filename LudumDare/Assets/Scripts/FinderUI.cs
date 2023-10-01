@@ -13,6 +13,7 @@ public class FinderUI : MonoBehaviour
         Exit,
     }
     private State state;
+    public State GetState() => state;
     public Image Image;
     public RectTransform Arrow;
 
@@ -53,6 +54,7 @@ public class FinderUI : MonoBehaviour
                 Image.sprite = ExitSprite;
                 break;
         }
+        state = to;
     }
 
     void Update()

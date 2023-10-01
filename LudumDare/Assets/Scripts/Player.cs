@@ -9,32 +9,39 @@ public class Player : MonoBehaviour
         Default,
         DiggingThroughGarbage
     }
-    public float PickpocketRadius = 3;
-    public float GarbageDigRadius = 3;
-    public int Cash;
+    public float InteractRadius = 3;
+    public float PickpocketAlarmIncrement = 0.25f;
     public PickpocketUI PickpocketUI;
+    public GameObject DepositUI;
     public GameObject GarbageDigUI;
 
     public GarbageCanManager GarbageCanManager;
     public State MyState {get; set;}
 
-    private Inventory inv;
+    public Inventory Inventory;
+    public FinderUI FinderUI;
+    public Teleporter.TeleporterLocation CurrentLocation;
     private KeyboardMovementInput input;
     private Control control;
     void Start()
     {
-        inv = GetComponent<Inventory>();
+        Inventory = GetComponent<Inventory>();
         input = GetComponent<KeyboardMovementInput>();
         control = GetComponent<Control>();
     }
     // Update is called once per frame
     void Update()
     {
-        if (DoGarbageDig()) {
+        if (DoItemDepositing()) {
+            PickpocketUI.gameObject.SetActive(false);
+            GarbageDigUI.SetActive(false);
+        }
+        else if (DoGarbageDig()) {
             PickpocketUI.gameObject.SetActive(false);
         } else {
             DoPickpocket();
         }
+        UpdateFinderUI();
         switch (MyState) {
             case State.Default:
                 input.enabled = true;
@@ -48,7 +55,7 @@ public class Player : MonoBehaviour
     //returns if in range
     private bool DoPickpocket()
     {
-        GameObject civ = ObjectRegistry.Singleton.GetClosestCivilian(transform.position, PickpocketRadius);
+        GameObject civ = ObjectRegistry.Singleton.GetClosestCivilian(transform.position, InteractRadius);
         PickpocketUI.gameObject.SetActive(civ != null);
         if (civ != null) {
             PickpocketUI.DisplayFor(civ.GetComponent<Inventory>(), 10);
@@ -58,13 +65,51 @@ public class Player : MonoBehaviour
     }
     private bool DoGarbageDig()
     {
-        bool inRange = Vector3.Distance(GarbageCanManager.SpecialGarbageCan.transform.position, transform.position) <= GarbageDigRadius;
+        bool inRange = Vector3.Distance(GarbageCanManager.SpecialGarbageCan.transform.position, transform.position) <= InteractRadius;
         GarbageDigUI.SetActive(inRange);
         return inRange;
     }
+    private bool DoItemDepositing()
+    {
+        if (Inventory.Item == null) {
+            DepositUI.SetActive(false);
+            return false;
+        }
+        ItemReceiver recv = ObjectRegistry.Singleton.GetClosestItemReciever(transform.position, InteractRadius);
+        DepositUI.SetActive(recv != null);
+        return recv != null;
+    }
     public void OnPickpocket(Inventory target, PickPocketResult result) {
         if (result == PickPocketResult.Success) {
-            inv.SwapInventory(target);
+            Inventory.SwapInventory(target);
+            Alarm.IncreaseAlarm(PickpocketAlarmIncrement);
         }
+    }
+    void UpdateFinderUI()
+    {
+        switch (FinderUI.GetState()) {
+            case FinderUI.State.Garbage:
+                if (LevelRequirements.Singleton.RequiredDrug.Item == null || Inventory.Item == LevelRequirements.Singleton.RequiredDrug.Item) {
+                    FinderUI.SetState(CurrentLocation == Teleporter.TeleporterLocation.Starting ? FinderUI.State.StartingTeleporter : FinderUI.State.MafiaGuy);
+                }
+                break;
+            case FinderUI.State.StartingTeleporter:
+                if (CurrentLocation == Teleporter.TeleporterLocation.Destination) {
+                    FinderUI.SetState(FinderUI.State.MafiaGuy);
+                }
+                break;
+            case FinderUI.State.MafiaGuy:
+                if (LevelRequirements.Singleton.Satisfied()) {
+                    FinderUI.SetState(FinderUI.State.Exit);
+                }
+                break;
+        }
+        //reset if requirements are not met
+        if (LevelRequirements.Singleton.RequiredDrug.Item != null && LevelRequirements.Singleton.RequiredDrug.Item != Inventory.Item) {
+            FinderUI.SetState(FinderUI.State.Garbage);
+        } else if (LevelRequirements.Singleton.RequiredMoney > 0) {
+            FinderUI.SetState(CurrentLocation == Teleporter.TeleporterLocation.Starting ? FinderUI.State.StartingTeleporter : FinderUI.State.MafiaGuy);
+        }
+
     }
 }

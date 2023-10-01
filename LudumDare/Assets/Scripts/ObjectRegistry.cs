@@ -8,6 +8,7 @@ public class ObjectRegistry : MonoBehaviour
     public List<GameObject> Civilians = new();
     public List<GameObject> Guards = new();
     public Player Player;
+    public ItemReceiver ItemReceiver;
 
     void Awake()
     {
@@ -22,7 +23,7 @@ public class ObjectRegistry : MonoBehaviour
     public GameObject GetClosestCivilian(Vector3 origin, float radius)
     {
         GameObject closest = null;
-        float minDist = radius;
+        float minDist = radius*radius;
         foreach (var civ in Civilians) {
             float d = (origin-civ.transform.position).sqrMagnitude;
             if(d <= minDist) {
@@ -35,7 +36,7 @@ public class ObjectRegistry : MonoBehaviour
     public GameObject GetClosestGuard(Vector3 origin, float radius)
     {
         GameObject closest = null;
-        float minDist = radius;
+        float minDist = radius*radius;
         foreach (var g in Guards) {
             float d = (origin-g.transform.position).sqrMagnitude;
             if(d <= minDist) {
@@ -44,5 +45,9 @@ public class ObjectRegistry : MonoBehaviour
             }
         }
         return closest;
+    }
+    public ItemReceiver GetClosestItemReciever(Vector3 origin, float radius)
+    {
+        return (ItemReceiver.transform.position-origin).sqrMagnitude <= radius*radius ? ItemReceiver : null;
     }
 }

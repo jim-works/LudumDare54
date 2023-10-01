@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: MoldyChicken
   m_EditorClassIdentifier: 
   Icon: {fileID: 21300000, guid: c4c297565317045388329cd548837e38, type: 3}
+  CashValue: 100

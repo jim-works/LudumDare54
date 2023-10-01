@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: Cherry
   m_EditorClassIdentifier: 
   Icon: {fileID: 21300000, guid: 7e96d40315f6a84b19f2a3fec29ef17c, type: 3}
+  CashValue: 100

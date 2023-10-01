@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: MoldyCookie
   m_EditorClassIdentifier: 
   Icon: {fileID: 21300000, guid: 3358ba69513a9754bb08e5108ffbfc09, type: 3}
+  CashValue: 50
