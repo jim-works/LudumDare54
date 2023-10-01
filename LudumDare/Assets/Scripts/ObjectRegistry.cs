@@ -13,11 +13,6 @@ public class ObjectRegistry : MonoBehaviour
 
     void Awake()
     {
-        if (Singleton != null) {
-            Debug.LogError("Singleton for ObjectRegistry already exists!");
-            Destroy(this);
-            return;
-        }
         Singleton = this;
     }
 
