@@ -14,6 +14,7 @@ public class Player : MonoBehaviour
     public PickpocketUI PickpocketUI;
     public GameObject DepositUI;
     public GameObject GarbageDigUI;
+    public LuggageCartUI LuggageCartUI;
 
     public GarbageCanManager GarbageCanManager;
     public State MyState {get; set;}
@@ -35,11 +36,15 @@ public class Player : MonoBehaviour
         if (DoItemDepositing()) {
             PickpocketUI.gameObject.SetActive(false);
             GarbageDigUI.SetActive(false);
+            LuggageCartUI.gameObject.SetActive(false);
         }
         else if (DoGarbageDig()) {
             PickpocketUI.gameObject.SetActive(false);
+            LuggageCartUI.gameObject.SetActive(false);
+        } else if (DoPickpocket()) {
+            LuggageCartUI.gameObject.SetActive(false);
         } else {
-            DoPickpocket();
+            DoLuggageCarting();
         }
         UpdateFinderUI();
         switch (MyState) {
@@ -78,6 +83,15 @@ public class Player : MonoBehaviour
         ItemReceiver recv = ObjectRegistry.Singleton.GetClosestItemReciever(transform.position, InteractRadius);
         DepositUI.SetActive(recv != null);
         return recv != null;
+    }
+    private bool DoLuggageCarting()
+    {
+        LuggageCart cart = ObjectRegistry.Singleton.GetClosestLuggageCart(transform.position, InteractRadius);
+        LuggageCartUI.gameObject.SetActive(cart != null);
+        if (cart != null) {
+            LuggageCartUI.DisplayFor(cart);
+        }
+        return cart != null;
     }
     public void OnPickpocket(Inventory target, PickPocketResult result) {
         if (result == PickPocketResult.Success) {

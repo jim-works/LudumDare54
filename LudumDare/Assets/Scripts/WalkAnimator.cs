@@ -2,34 +2,37 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody2D), typeof(SpriteRenderer))]
+[RequireComponent(typeof(SpriteRenderer))]
 public class WalkAnimator : MonoBehaviour
 {
     private const float DIR_CHANGE_EPSILON = 0.2f;
     public Sprite[] Down;
     public Sprite[] Up;
     public float DistancePerFrame = 0.5f;
-    private Rigidbody2D rb;
     private SpriteRenderer sr;
     private int frame = 0;
     private float distanceSinceLastFrame;
-    private Sprite[] currDir;
+    public Sprite[] currDir;
+    private Vector3 prevPos;
+    private Vector3 v;
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
         currDir = Down;
     }
 
-    void Update()
+    void FixedUpdate()
     {
-        distanceSinceLastFrame += rb.velocity.magnitude*Time.deltaTime;
+        v = (transform.position - prevPos) / Time.deltaTime;
+        prevPos = transform.position;
+        distanceSinceLastFrame += v.magnitude;
         UpdateFrame(GetDirection());
     }
 
     private Sprite[] GetDirection() {
-        if (Mathf.Abs(rb.velocity.y) >= DIR_CHANGE_EPSILON) {
-            currDir = rb.velocity.y <= 0 ? Down : Up;
+        
+        if (Mathf.Abs(v.y) >= DIR_CHANGE_EPSILON) {
+            currDir = v.y <= 0 ? Down : Up;
         }
         return currDir;
     }
