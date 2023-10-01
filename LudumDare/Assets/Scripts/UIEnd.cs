@@ -14,6 +14,8 @@ public class UIEnd : MonoBehaviour
     private int totalScore;
     private int profit;
 
+    public Item[] items;
+
 
     public TMP_Text textProfit;
     public TMP_Text textLost;
@@ -37,10 +39,10 @@ public class UIEnd : MonoBehaviour
 
 
         totalScore = 0;
-        /*for (int i = 0; i < DataStore.itemsSold.Count; i++)
+        for (int i = 0; i < items.Length; i++)
         {
-            totalScore = totalScore + DataStore.itemsSold[i].CashValue;
-        }*/
+            totalScore = totalScore + items[i].CashValue;
+        }
 
         profit = totalScore - DataStore.mobMoney;
 
