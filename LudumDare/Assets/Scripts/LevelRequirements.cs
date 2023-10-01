@@ -40,6 +40,7 @@ public class LevelRequirements : MonoBehaviour
             Debug.Log($"Requirement satisfied");
         }
         MoneyRecieved(item.CashValue);
+        DataStore.itemsSold.Add(item);
     }
 
     public void MoneyRecieved(int amount)
