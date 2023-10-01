@@ -5,6 +5,7 @@ using UnityEngine;
 public class ObjectRegistry : MonoBehaviour
 {
     public static ObjectRegistry Singleton;
+    public List<LuggageCart> LuggageCarts = new();
     public List<GameObject> Civilians = new();
     public List<GameObject> Guards = new();
     public Player Player;
@@ -12,11 +13,6 @@ public class ObjectRegistry : MonoBehaviour
 
     void Awake()
     {
-        if (Singleton != null) {
-            Debug.LogError("Singleton for ObjectRegistry already exists!");
-            Destroy(this);
-            return;
-        }
         Singleton = this;
     }
 
@@ -49,5 +45,19 @@ public class ObjectRegistry : MonoBehaviour
     public ItemReceiver GetClosestItemReciever(Vector3 origin, float radius)
     {
         return (ItemReceiver.transform.position-origin).sqrMagnitude <= radius*radius ? ItemReceiver : null;
+    }
+
+    public LuggageCart GetClosestLuggageCart(Vector3 origin, float radius)
+    {
+        LuggageCart closest = null;
+        float minDist = radius*radius;
+        foreach (var civ in LuggageCarts) {
+            float d = (origin-civ.transform.position).sqrMagnitude;
+            if(d <= minDist) {
+                closest = civ;
+                minDist = d;
+            }
+        }
+        return closest;
     }
 }

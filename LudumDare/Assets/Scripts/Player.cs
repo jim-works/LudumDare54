@@ -1,11 +1,15 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(Inventory), typeof(KeyboardMovementInput), typeof(Control))]
+[RequireComponent(typeof(SpriteRenderer), typeof(Collider2D), typeof(Rigidbody2D))]
 public class Player : MonoBehaviour
 {
-    public enum State {
+    public enum State
+    {
         Default,
         DiggingThroughGarbage
     }
@@ -14,35 +18,91 @@ public class Player : MonoBehaviour
     public PickpocketUI PickpocketUI;
     public GameObject DepositUI;
     public GameObject GarbageDigUI;
+    public LuggageCartUI LuggageCartUI;
 
     public GarbageCanManager GarbageCanManager;
-    public State MyState {get; set;}
+    public State MyState { get; set; }
+
+    public Color InvulnerabilityColor;
+    public float InvulnerabilityFlashInverval = 0.1f;
+
+    public int Health
+    {
+        get
+        {
+            return health;
+        }
+        set
+        {
+            if (value < health && Time.time - lastHitTime < InvulnerabilityDuration)
+            {
+                //invulnerability time
+                return;
+            }
+            if (value < health)
+            {
+                //got hit
+                OnHit();
+            }
+            health = value;
+            OnHealthChanged.Invoke(value);
+        }
+    }
+    public UnityEvent<int> OnHealthChanged;
+    [SerializeField]
+    private int health = 2;
+    public float InvulnerabilityDuration = 0.5f;
+    public float KnockbackMult = 1;
+    private float lastHitTime;
 
     public Inventory Inventory;
     public FinderUI FinderUI;
     public Teleporter.TeleporterLocation CurrentLocation;
     private KeyboardMovementInput input;
     private Control control;
+    private SpriteRenderer sr;
+    private Collider2D col;
+    private IEnumerator updatePhasedCollisionCoroutine;
+    private Rigidbody2D rb;
     void Start()
     {
         Inventory = GetComponent<Inventory>();
         input = GetComponent<KeyboardMovementInput>();
         control = GetComponent<Control>();
+        sr = GetComponent<SpriteRenderer>();
+        col = GetComponent<Collider2D>();
+        rb = GetComponent<Rigidbody2D>();
+        OnHealthChanged.Invoke(health);
     }
     // Update is called once per frame
     void Update()
     {
-        if (DoItemDepositing()) {
+        if (DoItemDepositing())
+        {
             PickpocketUI.gameObject.SetActive(false);
             GarbageDigUI.SetActive(false);
+            LuggageCartUI.gameObject.SetActive(false);
         }
-        else if (DoGarbageDig()) {
+        else if (DoGarbageDig())
+        {
             PickpocketUI.gameObject.SetActive(false);
-        } else {
-            DoPickpocket();
+            LuggageCartUI.gameObject.SetActive(false);
+        }
+        else if (DoPickpocket())
+        {
+            LuggageCartUI.gameObject.SetActive(false);
+        }
+        else
+        {
+            DoLuggageCarting();
+        }
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            Health += 1;
         }
         UpdateFinderUI();
-        switch (MyState) {
+        switch (MyState)
+        {
             case State.Default:
                 input.enabled = true;
                 break;
@@ -57,7 +117,8 @@ public class Player : MonoBehaviour
     {
         GameObject civ = ObjectRegistry.Singleton.GetClosestCivilian(transform.position, InteractRadius);
         PickpocketUI.gameObject.SetActive(civ != null);
-        if (civ != null) {
+        if (civ != null)
+        {
             PickpocketUI.DisplayFor(civ.GetComponent<Inventory>(), 10);
             return true;
         }
@@ -71,7 +132,8 @@ public class Player : MonoBehaviour
     }
     private bool DoItemDepositing()
     {
-        if (Inventory.Item == null) {
+        if (Inventory.Item == null)
+        {
             DepositUI.SetActive(false);
             return false;
         }
@@ -79,37 +141,92 @@ public class Player : MonoBehaviour
         DepositUI.SetActive(recv != null);
         return recv != null;
     }
-    public void OnPickpocket(Inventory target, PickPocketResult result) {
-        if (result == PickPocketResult.Success) {
+    private bool DoLuggageCarting()
+    {
+        LuggageCart cart = ObjectRegistry.Singleton.GetClosestLuggageCart(transform.position, InteractRadius);
+        LuggageCartUI.gameObject.SetActive(cart != null);
+        if (cart != null)
+        {
+            LuggageCartUI.DisplayFor(cart);
+        }
+        return cart != null;
+    }
+    public void OnPickpocket(Inventory target, PickPocketResult result)
+    {
+        if (result == PickPocketResult.Success)
+        {
             Inventory.SwapInventory(target);
             Alarm.IncreaseAlarm(PickpocketAlarmIncrement);
         }
     }
+    private void OnHit()
+    {
+        lastHitTime = Time.time;
+        StartCoroutine(FlashOnHit());
+        //have to stop the old coroutine so it doesn't disable phased movement before the new event is finisehd
+        if (updatePhasedCollisionCoroutine != null) {
+            StopCoroutine(updatePhasedCollisionCoroutine);
+        }
+        updatePhasedCollisionCoroutine = UpdateInvulnerabilityCollision();
+        StartCoroutine(updatePhasedCollisionCoroutine);
+
+    }
     void UpdateFinderUI()
     {
-        switch (FinderUI.GetState()) {
+        switch (FinderUI.GetState())
+        {
             case FinderUI.State.Garbage:
-                if (LevelRequirements.Singleton.RequiredDrug.Item == null || Inventory.Item == LevelRequirements.Singleton.RequiredDrug.Item) {
+                if (LevelRequirements.Singleton.RequiredDrug.Item == null || Inventory.Item == LevelRequirements.Singleton.RequiredDrug.Item)
+                {
                     FinderUI.SetState(CurrentLocation == Teleporter.TeleporterLocation.Starting ? FinderUI.State.StartingTeleporter : FinderUI.State.MafiaGuy);
                 }
                 break;
             case FinderUI.State.StartingTeleporter:
-                if (CurrentLocation == Teleporter.TeleporterLocation.Destination) {
+                if (CurrentLocation == Teleporter.TeleporterLocation.Destination)
+                {
                     FinderUI.SetState(FinderUI.State.MafiaGuy);
                 }
                 break;
             case FinderUI.State.MafiaGuy:
-                if (LevelRequirements.Singleton.Satisfied()) {
+                if (LevelRequirements.Singleton.Satisfied())
+                {
                     FinderUI.SetState(FinderUI.State.Exit);
                 }
                 break;
         }
         //reset if requirements are not met
-        if (LevelRequirements.Singleton.RequiredDrug.Item != null && LevelRequirements.Singleton.RequiredDrug.Item != Inventory.Item) {
+        if (LevelRequirements.Singleton.RequiredDrug.Item != null && LevelRequirements.Singleton.RequiredDrug.Item != Inventory.Item)
+        {
             FinderUI.SetState(FinderUI.State.Garbage);
-        } else if (LevelRequirements.Singleton.RequiredMoney > 0) {
+        }
+        else if (LevelRequirements.Singleton.RequiredMoney > 0)
+        {
             FinderUI.SetState(CurrentLocation == Teleporter.TeleporterLocation.Starting ? FinderUI.State.StartingTeleporter : FinderUI.State.MafiaGuy);
         }
 
+    }
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("guard") && collision.gameObject.GetComponent<Guard>().AIState == Guard.State.Chasing)
+        {
+            Health -= 1;
+            rb.AddForce((transform.position-collision.transform.position).normalized*KnockbackMult, ForceMode2D.Impulse);
+        }
+    }
+    private IEnumerator FlashOnHit()
+    {
+        while (Time.time - lastHitTime < InvulnerabilityDuration - InvulnerabilityFlashInverval)
+        {
+            sr.color = InvulnerabilityColor;
+            yield return new WaitForSeconds(InvulnerabilityFlashInverval);
+            sr.color = Color.white;
+            yield return new WaitForSeconds(InvulnerabilityFlashInverval);
+        }
+    }
+    private IEnumerator UpdateInvulnerabilityCollision()
+    {
+        col.excludeLayers |= LayerMask.GetMask("guard");
+        yield return new WaitForSeconds(InvulnerabilityDuration);
+        col.excludeLayers ^= LayerMask.GetMask("guard");
     }
 }
