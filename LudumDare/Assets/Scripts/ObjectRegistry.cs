@@ -44,6 +44,7 @@ public class ObjectRegistry : MonoBehaviour
     }
     public ItemReceiver GetClosestItemReciever(Vector3 origin, float radius)
     {
+        if (ItemReceiver == null) return null;
         return (ItemReceiver.transform.position-origin).sqrMagnitude <= radius*radius ? ItemReceiver : null;
     }
 

@@ -12,6 +12,8 @@ public class ChaserMovementInput : MonoBehaviour
     private NavMeshPath path;
     private float updatePathInterval;
     private float lastPathUpdateTime;
+    private int waypointIndex;
+    private const float MOVEMENT_EPSILON = 0.25f;
     // Start is called before the first frame update
     void Start()
     {
@@ -23,20 +25,24 @@ public class ChaserMovementInput : MonoBehaviour
     void Update()
     {
         TryUpdatePath();
-        if (path == null)
+        if (path == null || waypointIndex >= path.corners.Length)
         {
             //just move toward target if no path
             control.MoveDirection = Chasing.position - transform.position;
         }
-        else
+        Vector2 d = path.corners[waypointIndex] - transform.position;
+        if (d.sqrMagnitude < MOVEMENT_EPSILON * MOVEMENT_EPSILON)
         {
-            Vector3 d = path.corners[1] - transform.position;
-            if (d.sqrMagnitude < 0.001f && path.corners.Length > 2)
+            waypointIndex++;
+            if (waypointIndex >= path.corners.Length)
             {
-                d = path.corners[2] - transform.position;
+                //move toward target if out of path
+                control.MoveDirection = Chasing.position - transform.position;
+
             }
-            control.MoveDirection = d.normalized;
+            return;
         }
+        control.MoveDirection = d.normalized;
     }
 
     void TryUpdatePath()
@@ -44,6 +50,7 @@ public class ChaserMovementInput : MonoBehaviour
         if (Time.time - lastPathUpdateTime < updatePathInterval) {
             return;
         }
+        waypointIndex = 0;
         path = new();
         NavMesh.SamplePosition(transform.position, out NavMeshHit hitA, 10f, NavMesh.AllAreas);
         NavMesh.SamplePosition(Chasing.position, out NavMeshHit hitB, 10f, NavMesh.AllAreas);

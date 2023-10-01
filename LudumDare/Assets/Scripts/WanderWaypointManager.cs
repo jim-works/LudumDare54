@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class WanderWaypointManager : MonoBehaviour
 {
-    public WanderWaypointManager Singleton;
+    public static WanderWaypointManager Singleton;
     private WanderWaypoint[] waypoints;
 
     void Awake()
@@ -16,5 +16,11 @@ public class WanderWaypointManager : MonoBehaviour
     public WanderWaypoint RandomWaypoint()
     {
         return waypoints[Random.Range(0,waypoints.Length)];
+    }
+
+    public Vector2 GetWanderDestination()
+    {
+        WanderWaypoint waypoint = RandomWaypoint();
+        return (Vector2)waypoint.transform.position + Random.insideUnitCircle*waypoint.Radius;
     }
 }
