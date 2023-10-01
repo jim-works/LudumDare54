@@ -15,6 +15,7 @@ public class LuggageCart : MonoBehaviour
     private Control control;
     private WalkAnimator anim;
     private GameObject passenger;
+    public GameObject DestroyParticles;
     private float prevDistancePerFrame;
     // Start is called before the first frame update
     void Start()
@@ -31,7 +32,7 @@ public class LuggageCart : MonoBehaviour
     }
     void OnDisable()
     {
-        ObjectRegistry.Singleton.LuggageCarts.Add(this);
+        ObjectRegistry.Singleton.LuggageCarts.Remove(this);
     }
 
     void Update()
@@ -43,6 +44,16 @@ public class LuggageCart : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R))
         {
             RemovePassenger();
+        }
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("guard") && collision.gameObject.GetComponent<Guard>().AIState == Guard.State.Chasing)
+        {
+            RemovePassenger();
+            Instantiate(DestroyParticles, transform.position, Quaternion.identity);
+            Destroy(gameObject);
         }
     }
 

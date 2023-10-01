@@ -27,5 +27,8 @@ public class RotationCorrector : MonoBehaviour
         float error = TargetZRot-(angle > 180 ? angle-360 : angle);
         oldError = error-oldError;
         rb.AddTorque(CorrectionStrength*error+DerivativeTerm*oldError, ForceMode2D.Force);
+        if (Mathf.Abs(rb.angularVelocity) > 1080) {
+            rb.angularVelocity = Mathf.Sign(rb.angularVelocity)*1080;
+        }
     }
 }
