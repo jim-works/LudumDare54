@@ -39,7 +39,7 @@ public class WanderMovementInput : MonoBehaviour
             doneMoving = true;
             return;
         }
-        if (path == null)
+        if (path == null || waypointIndex >= path.corners.Length)
         {
             //walk in safe area if no path
             control.MoveDirection = delta;

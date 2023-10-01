@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Control))]
+[RequireComponent(typeof(Control), typeof(Rigidbody2D))]
 public class Guard : MonoBehaviour
 {
     public enum State
@@ -14,8 +14,9 @@ public class Guard : MonoBehaviour
     public float ChaseGiveUpExtraDistance = 2;
     public float WanderMoveSpeed = 2;
     public float ChaseMoveSpeed = 5;
+    public float KnockBackAccel = 1;
     public Transform Detecting;
-    public MonoBehaviour Chaser;
+    public ChaserMovementInput Chaser;
     public MonoBehaviour Wanderer;
     public GameObject ChaseUI;
 
@@ -35,6 +36,7 @@ public class Guard : MonoBehaviour
     }
     private State _state;
     private Control control;
+    private Rigidbody2D rb;
     void Awake() {
         //setup
         control = GetComponent<Control>();
@@ -42,6 +44,11 @@ public class Guard : MonoBehaviour
         Wanderer.enabled = true;
         control.MoveSpeed = WanderMoveSpeed;
         _state = State.Wandering;
+        if (Detecting == null) {
+            Detecting = ObjectRegistry.Singleton.Player.transform;
+            Chaser.Chasing = ObjectRegistry.Singleton.Player.transform;
+        }
+        rb = GetComponent<Rigidbody2D>();
     }
 
     void Update()
@@ -56,13 +63,11 @@ public class Guard : MonoBehaviour
             case State.Wandering:
                 if (d <= DetectionRadius*Alarm.DetectionRadiusMult) {
                     AIState = State.Chasing;
-                    Debug.Log("chasing");
                 }
                 break;
             case State.Chasing:
                 if (d >= DetectionRadius*Alarm.DetectionRadiusMult+ChaseGiveUpExtraDistance) {
                     AIState = State.Wandering;
-                    Debug.Log("wandering");
                 }
                 break;
         }
@@ -95,5 +100,13 @@ public class Guard : MonoBehaviour
     void OnDisable()
     {
         ObjectRegistry.Singleton.Guards.Remove(gameObject);
+    }
+
+    void OnCollisionEnter2D(Collision2D col)
+    {
+        if (col.gameObject.CompareTag("guard"))
+        {
+            rb.AddForce(KnockBackAccel * rb.mass * (col.gameObject.transform.position-transform.position).normalized, ForceMode2D.Impulse);
+        }
     }
 }

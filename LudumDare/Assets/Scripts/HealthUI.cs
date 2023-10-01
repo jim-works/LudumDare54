@@ -11,7 +11,6 @@ public class HealthUI : MonoBehaviour
 
     public void UpdateHealth(int health)
     {
-        Debug.Log("heart");
         foreach (var g in hearts)
         {
             Destroy(g);
