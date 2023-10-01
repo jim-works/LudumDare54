@@ -21,6 +21,7 @@ public class GarbageCanManager : MonoBehaviour
             basic.transform.parent = transform;
             Destroy(SpecialGarbageCan);
             SpecialGarbageCan = null;
+            Debug.Log("Reset trashcan");
         }
         Transform[] transforms = GetComponentsInChildren<Transform>();
         int promotionIdx = Random.Range(0, transforms.Length);

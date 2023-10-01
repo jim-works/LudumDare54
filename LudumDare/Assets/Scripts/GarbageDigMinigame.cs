@@ -58,7 +58,6 @@ public class GarbageDigMinigame : MonoBehaviour
     void Update()
     {
         timeElapsed += Time.deltaTime;
-        Debug.Log(state);
         switch (state)
         {
             case State.Digging:

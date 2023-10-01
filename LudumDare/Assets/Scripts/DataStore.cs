@@ -5,5 +5,5 @@ using UnityEngine;
 public static class DataStore
 {
     public static int mobMoney;
-    public static List<Item> itemsSold;
+    public static List<Item> itemsSold = new();
 }

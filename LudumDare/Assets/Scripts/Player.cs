@@ -126,6 +126,7 @@ public class Player : MonoBehaviour
     }
     private bool DoGarbageDig()
     {
+        if (GarbageCanManager.SpecialGarbageCan == null) return false;
         bool inRange = Vector3.Distance(GarbageCanManager.SpecialGarbageCan.transform.position, transform.position) <= InteractRadius;
         GarbageDigUI.SetActive(inRange);
         return inRange;
