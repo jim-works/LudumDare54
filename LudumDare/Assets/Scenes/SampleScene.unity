@@ -1111,12 +1111,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   InteractRadius: 3
-  Cash: 0
+  PickpocketAlarmIncrement: 0.25
   PickpocketUI: {fileID: 85027007}
   DepositUI: {fileID: 660246993}
   GarbageDigUI: {fileID: 667363884}
   GarbageCanManager: {fileID: 463667390}
   Inventory: {fileID: 0}
+  FinderUI: {fileID: 295450224}
+  CurrentLocation: 0
 --- !u!114 &116799947
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17075,6 +17077,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Destination: {x: -8, y: 37.1, z: 0}
+  DestinationLocation: 0
 --- !u!50 &1920070518
 Rigidbody2D:
   serializedVersion: 4
@@ -18906,6 +18909,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Destination: {x: -8, y: -17.3, z: 0}
+  DestinationLocation: 1
 --- !u!50 &1986738096
 Rigidbody2D:
   serializedVersion: 4

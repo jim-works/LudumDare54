@@ -46,4 +46,5 @@ public class LevelRequirements : MonoBehaviour
     {
         RequiredMoney -= amount;
     }
+    public bool Satisfied() => RequiredDrug.Item == null && RequiredMoney <= 0;
 }
