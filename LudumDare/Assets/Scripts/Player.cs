@@ -9,28 +9,32 @@ public class Player : MonoBehaviour
         Default,
         DiggingThroughGarbage
     }
-    public float PickpocketRadius = 3;
-    public float GarbageDigRadius = 3;
+    public float InteractRadius = 3;
     public int Cash;
     public PickpocketUI PickpocketUI;
+    public GameObject DepositUI;
     public GameObject GarbageDigUI;
 
     public GarbageCanManager GarbageCanManager;
     public State MyState {get; set;}
 
-    private Inventory inv;
+    public Inventory Inventory;
     private KeyboardMovementInput input;
     private Control control;
     void Start()
     {
-        inv = GetComponent<Inventory>();
+        Inventory = GetComponent<Inventory>();
         input = GetComponent<KeyboardMovementInput>();
         control = GetComponent<Control>();
     }
     // Update is called once per frame
     void Update()
     {
-        if (DoGarbageDig()) {
+        if (DoItemDepositing()) {
+            PickpocketUI.gameObject.SetActive(false);
+            GarbageDigUI.SetActive(false);
+        }
+        else if (DoGarbageDig()) {
             PickpocketUI.gameObject.SetActive(false);
         } else {
             DoPickpocket();
@@ -48,7 +52,7 @@ public class Player : MonoBehaviour
     //returns if in range
     private bool DoPickpocket()
     {
-        GameObject civ = ObjectRegistry.Singleton.GetClosestCivilian(transform.position, PickpocketRadius);
+        GameObject civ = ObjectRegistry.Singleton.GetClosestCivilian(transform.position, InteractRadius);
         PickpocketUI.gameObject.SetActive(civ != null);
         if (civ != null) {
             PickpocketUI.DisplayFor(civ.GetComponent<Inventory>(), 10);
@@ -58,13 +62,23 @@ public class Player : MonoBehaviour
     }
     private bool DoGarbageDig()
     {
-        bool inRange = Vector3.Distance(GarbageCanManager.SpecialGarbageCan.transform.position, transform.position) <= GarbageDigRadius;
+        bool inRange = Vector3.Distance(GarbageCanManager.SpecialGarbageCan.transform.position, transform.position) <= InteractRadius;
         GarbageDigUI.SetActive(inRange);
         return inRange;
     }
+    private bool DoItemDepositing()
+    {
+        if (Inventory.Item == null) {
+            DepositUI.SetActive(false);
+            return false;
+        }
+        ItemReceiver recv = ObjectRegistry.Singleton.GetClosestItemReciever(transform.position, InteractRadius);
+        DepositUI.SetActive(recv != null);
+        return recv != null;
+    }
     public void OnPickpocket(Inventory target, PickPocketResult result) {
         if (result == PickPocketResult.Success) {
-            inv.SwapInventory(target);
+            Inventory.SwapInventory(target);
         }
     }
 }

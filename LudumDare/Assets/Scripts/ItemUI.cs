@@ -24,7 +24,7 @@ public class ItemUI : MonoBehaviour
     }
 
     void updateDisplay(Item item) {
-        if (item.Icon == null) {
+        if (item == null || item.Icon == null) {
             image.enabled = false;
         } else {
             image.sprite = item.Icon;

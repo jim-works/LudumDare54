@@ -7,6 +7,7 @@ public class LevelRequirements : MonoBehaviour
 {
     public static LevelRequirements Singleton;
     public Inventory RequiredDrug {get; private set;}
+    public int RequiredMoney {get; private set;} = 200;
     public Item[] PossibleRequiredDrugs;
     public float[] PossibleRequiredDrugsWeights;
     private float totalRequiredDrugsWeight;
@@ -28,5 +29,21 @@ public class LevelRequirements : MonoBehaviour
     public Item PickRequiredDrug()
     {
         return PossibleRequiredDrugs[Util.ChooseFromWeightedArray(PossibleRequiredDrugsWeights, totalRequiredDrugsWeight)];
+    }
+
+    public void ItemRecieved(Item item)
+    {
+        Debug.Log($"Testing requirement: {item.name}");
+        if (item == null) return;
+        if (item == RequiredDrug.Item) {
+            RequiredDrug.DropItem();
+            Debug.Log($"Requirement satisfied");
+        }
+        MoneyRecieved(item.CashValue);
+    }
+
+    public void MoneyRecieved(int amount)
+    {
+        RequiredMoney -= amount;
     }
 }

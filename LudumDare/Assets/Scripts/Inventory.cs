@@ -18,7 +18,9 @@ public class Inventory : MonoBehaviour
     }
     public Item DropItem() {
         Item.OnDrop(gameObject);
-        return Item;
+        Item i = Item;
+        Item = null;
+        return i;
     }
     public void SwapInventory(Inventory other) {
         Item pickup = other.DropItem();

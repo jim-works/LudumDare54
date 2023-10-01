@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: MoldyCheese
   m_EditorClassIdentifier: 
   Icon: {fileID: 21300000, guid: 172f15656f0992a1788f2eb12be2a012, type: 3}
+  CashValue: 50
