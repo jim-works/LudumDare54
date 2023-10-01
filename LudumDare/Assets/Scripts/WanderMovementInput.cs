@@ -64,7 +64,6 @@ public class WanderMovementInput : MonoBehaviour
         while (true)
         {
             wanderDestination = WanderWaypointManager.Singleton.GetWanderDestination();
-            Debug.Log($"wandering to {wanderDestination}");
             UpdatePath(wanderDestination);
             while (!doneMoving)
             {
