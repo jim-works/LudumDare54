@@ -55,6 +55,7 @@ public class LuggageCart : MonoBehaviour
         control.enabled = true;
         p.transform.SetParent(transform);
         prevDistancePerFrame = passenger.GetComponent<WalkAnimator>().DistancePerFrame;
+        passenger.GetComponent<Collider2D>().enabled = false;
     }
     public void RemovePassenger()
     {
@@ -66,6 +67,8 @@ public class LuggageCart : MonoBehaviour
         control.enabled = false;
         passenger.transform.SetParent(null);
         passenger.GetComponent<WalkAnimator>().DistancePerFrame = prevDistancePerFrame;
+        passenger.GetComponent<Collider2D>().enabled = true;
+        
         passenger = null;
     }
 }
