@@ -34,6 +34,7 @@ public class LevelRequirements : MonoBehaviour
 
     public void SetLevelRequiredMoney(int money) {
         MobCut = money;
+        DataStore.mobMoney = money;
     }
 
     public void ItemRecieved(Item item)
@@ -48,5 +49,5 @@ public class LevelRequirements : MonoBehaviour
         DataStore.itemsSold.Add(item);
     }
 
-    public bool Satisfied() => RequiredDrug.Item == null && RequiredMoney <= 0;
+    public bool Satisfied() => true;
 }

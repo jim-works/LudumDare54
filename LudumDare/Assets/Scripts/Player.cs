@@ -26,7 +26,9 @@ public class Player : MonoBehaviour
 
     public Color InvulnerabilityColor;
     public float InvulnerabilityFlashInverval = 0.1f;
+    public string GameOverScene = "GameOverScene";
     public List<(VendingBuff, int)> Buffs = new();
+    private float startTime;
 
     public int Health
     {
@@ -39,6 +41,11 @@ public class Player : MonoBehaviour
             if (value < health && Time.time - lastHitTime < InvulnerabilityDuration && Time.time - LastFartTime < InvulnerabilityDuration)
             {
                 //invulnerability time
+                return;
+            }
+            if (health <= 0)
+            {
+                Die();
                 return;
             }
             if (value < health)
@@ -75,6 +82,7 @@ public class Player : MonoBehaviour
         sr = GetComponent<SpriteRenderer>();
         col = GetComponent<Collider2D>();
         rb = GetComponent<Rigidbody2D>();
+        startTime = Time.time;
         OnHealthChanged.Invoke(health);
     }
     // Update is called once per frame
@@ -264,5 +272,10 @@ public class Player : MonoBehaviour
         col.excludeLayers |= LayerMask.GetMask("guard");
         yield return new WaitForSeconds(InvulnerabilityDuration);
         col.excludeLayers ^= LayerMask.GetMask("guard");
+    }
+    private void Die()
+    {
+        DataStore.LastRunTime = Time.time - startTime;
+        UnityEngine.SceneManagement.SceneManager.LoadScene(GameOverScene);
     }
 }
