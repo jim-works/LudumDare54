@@ -25,6 +25,9 @@ public class LevelRequirements : MonoBehaviour
         }
         RequiredDrug = GetComponent<Inventory>();
         RequiredDrug.PickupItem(PickRequiredDrug());
+        DataStore.RunCount++;
+        float interestProp = DataStore.RunCount*0.05f;
+        SetLevelRequiredMoney(Mathf.CeilToInt(DataStore.RemainingMobDebt*interestProp));
     }
 
     public Item PickRequiredDrug()
@@ -34,7 +37,7 @@ public class LevelRequirements : MonoBehaviour
 
     public void SetLevelRequiredMoney(int money) {
         MobCut = money;
-        DataStore.mobMoney = money;
+        DataStore.MobInterest = money;
     }
 
     public void ItemRecieved(Item item)
@@ -45,7 +48,7 @@ public class LevelRequirements : MonoBehaviour
             RequiredDrug.DropItem();
             Debug.Log($"Requirement satisfied");
         }
-        DataStore.BankedMoney += item.CashValue;
+        DataStore.BankedMoney += Mathf.CeilToInt(item.CashValue*DataStore.MoneyMultipler);
         DataStore.itemsSold.Add(item);
     }
 
