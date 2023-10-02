@@ -63,7 +63,7 @@ public class WanderMovementInput : MonoBehaviour
     {
         while (true)
         {
-            wanderDestination = WanderWaypointManager.Singleton.GetWanderDestination();
+            wanderDestination = WanderWaypointManager.Singleton.GetWanderDestination(transform.position);
             UpdatePath(wanderDestination);
             while (!doneMoving)
             {
@@ -82,7 +82,6 @@ public class WanderMovementInput : MonoBehaviour
         {
             //do safe small radius wandering if no path
             path = null;
-            Debug.LogWarning("coudn't find path to destination");
             wanderDestination = origin + Random.insideUnitCircle * SAFE_WANDER_RADIUS;
         }
         waypointIndex = 0;

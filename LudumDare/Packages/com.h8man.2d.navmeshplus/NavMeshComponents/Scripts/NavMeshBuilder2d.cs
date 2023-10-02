@@ -9,7 +9,7 @@ using Object = UnityEngine.Object;
 
 namespace NavMeshPlus.Extensions
 {
-    class NavMeshBuilder2dState: IDisposable
+    public class NavMeshBuilder2dState: IDisposable
     {
         public Dictionary<Sprite, Mesh> spriteMeshMap;
         public Dictionary<uint, Mesh> coliderMeshMap;
@@ -145,7 +145,7 @@ namespace NavMeshPlus.Extensions
         }
     }
 
-    class NavMeshBuilder2d
+    public class NavMeshBuilder2d
     {
         public static void CollectSources(List<NavMeshBuildSource> sources, NavMeshBuilder2dState builder)
         {

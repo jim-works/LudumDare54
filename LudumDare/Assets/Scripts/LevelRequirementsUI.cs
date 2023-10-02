@@ -13,12 +13,12 @@ public class LevelRequirementsUI : MonoBehaviour
         if (LevelRequirements.Singleton.RequiredDrug.Item == null && LevelRequirements.Singleton.RequiredMoney <= 0)
         {
             //all requirements satisfied, show how much extra is banked
-            NeedText.text = $"BONUS: ${-LevelRequirements.Singleton.RequiredMoney}";
+            NeedText.text = $"EXTRA: ${-LevelRequirements.Singleton.RequiredMoney}\nBANK: ${DataStore.BankedMoney}";
         }
         else
         {
             //at least one requirement not satisfied, show what's left\
-            NeedText.text = $"NEED: {(LevelRequirements.Singleton.RequiredDrug.Item != null ? "↑" : "")}{(LevelRequirements.Singleton.RequiredMoney > 0 ? "+$" + LevelRequirements.Singleton.RequiredMoney.ToString() : "")}";
+            NeedText.text = $"NEED: {(LevelRequirements.Singleton.RequiredDrug.Item != null ? "↑" : "")}{(LevelRequirements.Singleton.RequiredMoney > 0 ? "+$" + LevelRequirements.Singleton.RequiredMoney.ToString() : "")}\nBANK: ${DataStore.BankedMoney}";
         }
 
     }

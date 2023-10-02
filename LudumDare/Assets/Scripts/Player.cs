@@ -19,12 +19,14 @@ public class Player : MonoBehaviour
     public GameObject DepositUI;
     public GameObject GarbageDigUI;
     public LuggageCartUI LuggageCartUI;
+    public VendingMachineUI VendingMachineUI;
 
     public GarbageCanManager GarbageCanManager;
     public State MyState { get; set; }
 
     public Color InvulnerabilityColor;
     public float InvulnerabilityFlashInverval = 0.1f;
+    public List<(VendingBuff, int)> Buffs = new();
 
     public int Health
     {
@@ -34,7 +36,7 @@ public class Player : MonoBehaviour
         }
         set
         {
-            if (value < health && Time.time - lastHitTime < InvulnerabilityDuration)
+            if (value < health && Time.time - lastHitTime < InvulnerabilityDuration && Time.time - LastFartTime < InvulnerabilityDuration)
             {
                 //invulnerability time
                 return;
@@ -54,6 +56,7 @@ public class Player : MonoBehaviour
     public float InvulnerabilityDuration = 0.5f;
     public float KnockbackMult = 1;
     private float lastHitTime;
+    public float LastFartTime;
 
     public Inventory Inventory;
     public FinderUI FinderUI;
@@ -79,11 +82,18 @@ public class Player : MonoBehaviour
     {
         if (DoItemDepositing())
         {
+            VendingMachineUI.gameObject.SetActive(false);
             PickpocketUI.gameObject.SetActive(false);
             GarbageDigUI.SetActive(false);
             LuggageCartUI.gameObject.SetActive(false);
         }
         else if (DoGarbageDig())
+        {
+            VendingMachineUI.gameObject.SetActive(false);
+            PickpocketUI.gameObject.SetActive(false);
+            LuggageCartUI.gameObject.SetActive(false);
+        }
+        else if (DoVending())
         {
             PickpocketUI.gameObject.SetActive(false);
             LuggageCartUI.gameObject.SetActive(false);
@@ -110,6 +120,21 @@ public class Player : MonoBehaviour
                 input.enabled = false;
                 control.MoveDirection = Vector2.zero;
                 break;
+        }
+    }
+
+    public void AddBuff(VendingBuff buff)
+    {
+        int idx = Buffs.FindIndex(x => x.Item1 == buff);
+        if (idx >= 0)
+        {
+            buff.OnStackIncreased(gameObject, Buffs[idx].Item2);
+            Buffs[idx] = (Buffs[idx].Item1, Buffs[idx].Item2 + 1);
+        }
+        else
+        {
+            Buffs.Add((buff,1));
+            buff.OnFirstApplied(gameObject);
         }
     }
     //returns if in range
@@ -152,6 +177,16 @@ public class Player : MonoBehaviour
         }
         return cart != null;
     }
+    private bool DoVending()
+    {
+        VendingMachine vend = ObjectRegistry.Singleton.GetClosestVendingMachine(transform.position, InteractRadius);
+        VendingMachineUI.gameObject.SetActive(vend != null);
+        if (vend != null)
+        {
+            VendingMachineUI.DisplayFor(vend);
+        }
+        return vend != null;
+    }
     public void OnPickpocket(Inventory target, PickPocketResult result)
     {
         if (result == PickPocketResult.Success)
@@ -165,12 +200,12 @@ public class Player : MonoBehaviour
         lastHitTime = Time.time;
         StartCoroutine(FlashOnHit());
         //have to stop the old coroutine so it doesn't disable phased movement before the new event is finisehd
-        if (updatePhasedCollisionCoroutine != null) {
+        if (updatePhasedCollisionCoroutine != null)
+        {
             StopCoroutine(updatePhasedCollisionCoroutine);
         }
         updatePhasedCollisionCoroutine = UpdateInvulnerabilityCollision();
         StartCoroutine(updatePhasedCollisionCoroutine);
-
     }
     void UpdateFinderUI()
     {
@@ -211,7 +246,7 @@ public class Player : MonoBehaviour
         if (collision.gameObject.CompareTag("guard") && collision.gameObject.GetComponent<Guard>().AIState == Guard.State.Chasing)
         {
             Health -= 1;
-            rb.AddForce((transform.position-collision.transform.position).normalized*KnockbackMult, ForceMode2D.Impulse);
+            rb.AddForce((transform.position - collision.transform.position).normalized * KnockbackMult, ForceMode2D.Impulse);
         }
     }
     private IEnumerator FlashOnHit()

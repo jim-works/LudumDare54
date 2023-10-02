@@ -6,6 +6,7 @@ public class ObjectRegistry : MonoBehaviour
 {
     public static ObjectRegistry Singleton;
     public List<LuggageCart> LuggageCarts = new();
+    public List<VendingMachine> VendingMachines = new();
     public List<GameObject> Civilians = new();
     public List<GameObject> Guards = new();
     public Player Player;
@@ -53,6 +54,20 @@ public class ObjectRegistry : MonoBehaviour
         LuggageCart closest = null;
         float minDist = radius*radius;
         foreach (var civ in LuggageCarts) {
+            float d = (origin-civ.transform.position).sqrMagnitude;
+            if(d <= minDist) {
+                closest = civ;
+                minDist = d;
+            }
+        }
+        return closest;
+    }
+
+    public VendingMachine GetClosestVendingMachine(Vector3 origin, float radius)
+    {
+        VendingMachine closest = null;
+        float minDist = radius*radius;
+        foreach (var civ in VendingMachines) {
             float d = (origin-civ.transform.position).sqrMagnitude;
             if(d <= minDist) {
                 closest = civ;

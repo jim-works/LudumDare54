@@ -31,7 +31,12 @@ public class ChaserMovementInput : MonoBehaviour
     void Update()
     {
         TryUpdatePath();
-        if (path == null || waypointIndex >= path.corners.Length)
+        if (path == null)
+        {
+            control.MoveDirection = Vector2.zero;
+            return;
+        }
+        if (waypointIndex >= path.corners.Length)
         {
             //just move toward target if no path
             control.MoveDirection = Chasing.position - transform.position;
@@ -63,7 +68,6 @@ public class ChaserMovementInput : MonoBehaviour
         lastPathUpdateTime = Time.time;
         if (!NavMesh.CalculatePath(hitA.position, hitB.position, NavMesh.AllAreas, path))
         {
-            Debug.LogWarning("Couldn't calculate path");
             //just move toward target if no path
             path = null;
         }

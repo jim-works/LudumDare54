@@ -7,7 +7,8 @@ public class LevelRequirements : MonoBehaviour
 {
     public static LevelRequirements Singleton;
     public Inventory RequiredDrug {get; private set;}
-    public int RequiredMoney {get; private set;} = 200;
+    public int RequiredMoney => MobCut - DataStore.BankedMoney;
+    public int MobCut {get; private set;} = 200;
     public Item[] PossibleRequiredDrugs;
     public float[] PossibleRequiredDrugsWeights;
     private float totalRequiredDrugsWeight;
@@ -31,6 +32,10 @@ public class LevelRequirements : MonoBehaviour
         return PossibleRequiredDrugs[Util.ChooseFromWeightedArray(PossibleRequiredDrugsWeights, totalRequiredDrugsWeight)];
     }
 
+    public void SetLevelRequiredMoney(int money) {
+        MobCut = money;
+    }
+
     public void ItemRecieved(Item item)
     {
         Debug.Log($"Testing requirement: {item.name}");
@@ -39,13 +44,9 @@ public class LevelRequirements : MonoBehaviour
             RequiredDrug.DropItem();
             Debug.Log($"Requirement satisfied");
         }
-        MoneyRecieved(item.CashValue);
+        DataStore.BankedMoney += item.CashValue;
         DataStore.itemsSold.Add(item);
     }
 
-    public void MoneyRecieved(int amount)
-    {
-        RequiredMoney -= amount;
-    }
     public bool Satisfied() => RequiredDrug.Item == null && RequiredMoney <= 0;
 }
