@@ -82,6 +82,9 @@ public class Player : MonoBehaviour
         sr = GetComponent<SpriteRenderer>();
         col = GetComponent<Collider2D>();
         rb = GetComponent<Rigidbody2D>();
+        rb.mass = DataStore.GymMultipler;
+        control.MoveAcceleration *= DataStore.GymMultipler;
+        control.MoveSpeed *= DataStore.GymMultipler;
         startTime = Time.time;
         OnHealthChanged.Invoke(health);
     }
@@ -116,7 +119,7 @@ public class Player : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.P))
         {
-            Health += 1;
+            DataStore.BankedMoney += 100;
         }
         UpdateFinderUI();
         switch (MyState)

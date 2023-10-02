@@ -32,4 +32,22 @@ public class ScenesManager : MonoBehaviour
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
+
+    public void LoadButtonScene()
+    {
+        SceneManager.LoadScene("ButtonScene");
+    }
+
+    public void LoadNewGameOrEndCutscene()
+    {
+        if (DataStore.RemainingMobDebt <= 0 && !DataStore.WinCutscenePlayed)
+        {
+            DataStore.WinCutscenePlayed = true;
+            SceneManager.LoadScene("WinScene");
+        }
+        else
+        {
+            LoadNewGame();
+        }
+    }
 }

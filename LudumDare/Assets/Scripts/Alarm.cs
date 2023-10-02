@@ -10,7 +10,7 @@ public static class Alarm
 
     public static void IncreaseAlarm(float amount)
     {
-        Level += amount;
+        Level += amount*DataStore.AlertMultipler;
     }
     public static void DecreaseAlarm(float amount)
     {
