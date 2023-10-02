@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff09b9931c42c6de99d04b9670c03a72, type: 3}
+  m_Name: Francis Brand's Fantasic Beans
+  m_EditorClassIdentifier: 
+  Description: Freaky fresh beans force flatulence
+  BuffPrefab: {fileID: 8786466305352247577, guid: b1e2d70461bfb92bd98803d8fa1ef962, type: 3}

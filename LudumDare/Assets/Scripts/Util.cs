@@ -5,7 +5,6 @@ public static class Util
     public static int ChooseFromWeightedArray(float[] weights, float totalWeight)
     {
         float weight = Random.Range(0f, totalWeight);
-        Debug.Log($"choosing weight {weight}");
         int idx = 0;
         for (; idx < weights.Length; idx++)
         {
