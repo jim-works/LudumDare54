@@ -7,7 +7,7 @@ public static class DataStore
     public static int RunCount = 0;
     public static int MobInterest;
     public static int RemainingMobDebt = 1000;
-    public static int BankedMoney = 10000;
+    public static int BankedMoney = 25;
     public static float LastRunTime;
     public static float ToalRunTime;
     public static List<Item> itemsSold = new();

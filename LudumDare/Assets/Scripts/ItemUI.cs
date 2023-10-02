@@ -13,6 +13,7 @@ public class ItemUI : MonoBehaviour
     void Start()
     {
         image = GetComponent<Image>();
+        updateDisplay(null);
     }
 
     void Update() {

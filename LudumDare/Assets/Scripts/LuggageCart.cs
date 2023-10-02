@@ -23,7 +23,7 @@ public class LuggageCart : MonoBehaviour
         control = GetComponent<Control>();
         anim = GetComponent<WalkAnimator>();
         control.MoveSpeed *= DataStore.GymMultipler;
-        control.MoveAcceleration *= DataStore.GymMultipler;
+        control.MoveAcceleration *= DataStore.GymMultipler*Mathf.Sqrt(DataStore.GymMultipler);
         var rb = GetComponent<Rigidbody2D>();
         if (rb) rb.mass *= DataStore.GymMultipler;
         MyState = State.Empty;

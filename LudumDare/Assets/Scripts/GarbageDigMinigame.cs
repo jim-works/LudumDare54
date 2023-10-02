@@ -30,11 +30,12 @@ public class GarbageDigMinigame : MonoBehaviour
     private State state;
     private Item currentDrop;
     private Inventory targetInventory;
-
+    private AudioSource source;
     void Start()
     {
         foundItem = FoundItemSprite.GetComponent<SpriteRenderer>();
         targetInventory = ObjectRegistry.Singleton.Player.GetComponent<Inventory>();
+        source = GetComponent<AudioSource>();
     }
     void OnEnable()
     {
@@ -88,6 +89,7 @@ public class GarbageDigMinigame : MonoBehaviour
                     currentDrop = null;
                     DiggingUI.SetActive(true);
                     SelectingUI.SetActive(false);
+                    EndGame();
                 }
                 break;
         }
@@ -97,6 +99,7 @@ public class GarbageDigMinigame : MonoBehaviour
     {
         DigParticles.Play();
         HandsDigAnim.Play();
+        source.Play();
         Alarm.IncreaseAlarm(AlarmIncreasePerDig);
         if (Random.value > FindItemProb)
         {

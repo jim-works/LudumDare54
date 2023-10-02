@@ -29,7 +29,7 @@ public class Player : MonoBehaviour
     public string GameOverScene = "GameOverScene";
     public List<(VendingBuff, int)> Buffs = new();
     private float startTime;
-
+    private AudioSource audioSource;
     public int Health
     {
         get
@@ -82,6 +82,7 @@ public class Player : MonoBehaviour
         sr = GetComponent<SpriteRenderer>();
         col = GetComponent<Collider2D>();
         rb = GetComponent<Rigidbody2D>();
+        audioSource = GetComponent<AudioSource>();
         rb.mass = DataStore.GymMultipler;
         control.MoveAcceleration *= DataStore.GymMultipler;
         control.MoveSpeed *= DataStore.GymMultipler;
@@ -210,6 +211,7 @@ public class Player : MonoBehaviour
     {
         lastHitTime = Time.time;
         StartCoroutine(FlashOnHit());
+        audioSource.Play();
         //have to stop the old coroutine so it doesn't disable phased movement before the new event is finisehd
         if (updatePhasedCollisionCoroutine != null)
         {

@@ -13,11 +13,11 @@ public class Inventory : MonoBehaviour
             DropItem();
         }
         Item = pickup;
-        pickup.OnPickup(gameObject);
+        if (pickup != null) pickup.OnPickup(gameObject);
         return old;
     }
     public Item DropItem() {
-        Item.OnDrop(gameObject);
+        if (Item != null) Item.OnDrop(gameObject);
         Item i = Item;
         Item = null;
         return i;
